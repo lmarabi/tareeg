@@ -1,0 +1,8 @@
+This extenstions is used to support the extractor 
+
+1) getNode.sh: 
+	is a script that takes the unsortednode.txt from the extractor and then remove the duplicated nodes.
+
+2) FWTools is a tools that convert the KML file to shape file the script of conversion is under the /bin/kml2shape.sh
+
+the script kml2shape takes two argument input.kml output.shp

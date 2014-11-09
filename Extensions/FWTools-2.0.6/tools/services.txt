@@ -1,0 +1,13 @@
+Atlas of Canada,http://atlas.gc.ca:80/cgi-bin/atlaswms_en?
+BTS Roads,http://ims.cr.usgs.gov:80/servlet/com.esri.wms.Esrimap/USGS_EDC_Trans_BTS_Roads?
+Canadian Geographical Names,http://cgns.nrcan.gc.ca/wfs/cubeserv.cgi?
+Cubewerx Mars,http://demo.cubewerx.com/demo/cubeserv/cubeserv.cgi?CONFIG=mars&VERSION=1.1&REQUEST=GetCapabilities
+DM Solutions Demo,http://dev1.dmsolutions.ca/cgi-bin/mswms_gmap?
+EDC GNIS,http://gisdata.usgs.net:80/servlet/com.esri.wms.Esrimap/EDC_GNIS?
+EDC Hydro,http://gisdata.usgs.net:80/servlet/com.esri.wms.Esrimap/USGS_EDC_Hydro_RAD?
+GDAL SRTM30Plus,http://maps.gdal.org/cgi-bin/mapserv_dem?
+LIBC,http://libcwms.gov.bc.ca/wmsconnector/com.esri.wsit.WMSServlet/ogc_layer_service?
+NRN Quebec,http://www.geographynetwork.ca/wmsconnector/com.esri.wsit.WMSServlet/Geobase_NRN_Quebec_I?
+USGS Ortho,http://ims.cr.usgs.gov:80/servlet/com.esri.wms.Esrimap/USGS_EDC_Ortho_133Urban?
+USGS Reference,http://ims.cr.usgs.gov:80/servlet/com.esri.wms.Esrimap/USGS_WMS_REF?
+USGS World,http://ims.cr.usgs.gov:80/servlet/com.esri.wms.Esrimap/world?
