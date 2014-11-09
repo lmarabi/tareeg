@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import osmextractor.Main.dataType;
 
 /**
  *
@@ -30,7 +31,7 @@ public class Request {
     private static OutputStreamWriter statusLog;
     private enum exportType {
 
-        node, edge,unsortedNode
+        node, edge,unsortedNode,wkt
     }
 
     public Request() {
@@ -158,7 +159,7 @@ public class Request {
     }
     
     public void GetSmartOutput(String id, String maxLat, String maxLon, String minLat,
-            String minLon, String dataPath, String exportPath)
+            String minLon, String dataPath, String exportPath, dataType type)
             throws FileNotFoundException, UnsupportedEncodingException, IOException {
         this.outwriter = new OutputStreamWriter[exportType.values().length];
         exportPath +=  id + "/";
@@ -175,6 +176,10 @@ public class Request {
                 new OutputStreamWriter(
                 new FileOutputStream(
                 exportPath + exportType.edge.toString() + ".txt"), "UTF-8");
+        this.outwriter[exportType.wkt.ordinal()] =
+                new OutputStreamWriter(
+                new FileOutputStream(
+                exportPath + exportType.wkt.toString() + ".WKT"), "UTF-8");
         //outwriter[exportType.node.ordinal()].write("Node_id,latitude,longitude\n");
         outwriter[exportType.edge.ordinal()].write("Edge_id,Start_Node_id,End_Node_id,Tags\n");
         //Set the area of interest in the MBR 
@@ -188,8 +193,13 @@ public class Request {
         for (Partition f : files) {
             logStart("Start Reading file "+f.getPartition().getName());
             //Build the edge and the node  from the file 
-            area.smartBuildNodeEdges(f,outwriter[exportType.edge.ordinal()],
-                    outwriter[exportType.unsortedNode.ordinal()]);
+			if (type.equals(dataType.road_edges)) {
+				area.smartBuildNodeEdges(f,
+						outwriter[exportType.edge.ordinal()],
+						outwriter[exportType.unsortedNode.ordinal()]);
+			}else{
+				area.rangeQueryRtree(f, outwriter[exportType.edge.ordinal()]);
+			}
             logEnd("End reading file "+f.getPartition().getName());
         }
                
@@ -201,6 +211,7 @@ public class Request {
         logEnd("end reading files");
         outwriter[exportType.edge.ordinal()].close();
         outwriter[exportType.unsortedNode.ordinal()].close();
+        outwriter[exportType.wkt.ordinal()].close();
         logStart("Remove duplicate nodes");
         String commandLine = "sh "+System.getProperty("user.dir") + "/getNode.sh "
                 +exportPath + exportType.unsortedNode.toString() + ".txt "
@@ -258,29 +269,23 @@ public class Request {
     private List<Partition> ReadMaster(String path) throws FileNotFoundException, IOException {
         File master;
         List<Partition> result = new ArrayList<Partition>();
-        master = new File(path+"_master");
+        master = new File(path+"_master.rtree");
         BufferedReader br = new BufferedReader(new FileReader(master));
         String line = null;
-        int count = 0;// this is done to skip the flag at the first line in file
+        
         while((line = br.readLine()) != null){
             String[] temp = line.split(",");
             // The file has the following format as Aggreed with the interface
             // between hadoop and this program 
             // #filenumber,minLat,minLon,maxLat,maxLon
-            if (temp.length == 5 && count!= 0) {
-                Point pointMax = new Point(temp[3], temp[4]);
-                Point pointMin = new Point(temp[1], temp[2]);
-                if (area.Intersect(pointMax, pointMin)) {
-                    System.out.println("Chose MBR Min("+pointMin.getLat()+","
-                            + pointMin.getLon()+")"+" - Max("+ pointMax.getLat()+","
-                            + pointMax.getLon()+")");
-                    File f = new File(path+temp[0]);
-                    Partition part = new Partition(f, new MBR(pointMax, pointMin));
+            if (temp.length == 8) {
+            	Partition part = new Partition(line,path);
+                if (area.Intersect(part.getArea().getMax(), part.getArea().getMin())) {
                     result.add(part);
                 }
             }
-            count++;
         }
+        br.close();
         return result;
     }
 }

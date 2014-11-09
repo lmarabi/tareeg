@@ -17,6 +17,16 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+
+import edu.umn.cs.spatialHadoop.core.RTree;
+import edu.umn.cs.spatialHadoop.core.Rectangle;
+import edu.umn.cs.spatialHadoop.core.ResultCollector;
+import edu.umn.cs.spatialHadoop.osm.OSMPolygon;
+
 /**
  *
  * @author turtle
@@ -297,6 +307,50 @@ public class MBR {
 
             }
         }
+    }
+    
+    
+    
+    
+    /**
+     * This method Write the edge as is and make sure that it remove the
+     * redundant nodes, This is the recommended for speed up process.
+     *
+     * @param f
+     * @param outEdge
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void rangeQueryRtree(Partition part, final OutputStreamWriter kwtWriter) throws FileNotFoundException, IOException ,OutOfMemoryError{
+    	//init Rtree object in the partition 
+    	RTree<OSMPolygon> rtree = new RTree<OSMPolygon>();
+		rtree.setStockObject(new OSMPolygon());
+		Path file = new Path(part.getPartition().getPath());
+		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration();
+		FileSystem fs = file.getFileSystem(conf);
+		FSDataInputStream in = fs.open(file);
+		in.skip(8);
+		rtree.readFields(in);
+		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLon());
+
+		//Collector return the result 
+		ResultCollector<OSMPolygon> output = new ResultCollector<OSMPolygon>() {
+
+			@Override
+			public void collect(OSMPolygon arg0) {
+				System.out.println(arg0.toText(new Text ()));
+				try {
+					kwtWriter.write(arg0.toText(new Text()).toString()+"\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		
+		int results = rtree.search(mbr, output);
+		System.out.println("number of restuts: "+results);
     }
     
 }

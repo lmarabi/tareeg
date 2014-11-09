@@ -101,7 +101,7 @@ public class Main {
                 MBR area = new MBR(new Point(args[3], args[4]), new Point(args[5], args[6]));
                 user = new User(id, name, email, area, type, exportPath + "id");
                 RegisterToLog(user.toString());
-                request.GetSmartOutput(id, args[3], args[4], args[5], args[6], folderPath, exportPath);
+                request.GetSmartOutput(id, args[3], args[4], args[5], args[6], folderPath, exportPath,type);
 
                 GenerateKmlShapeFiles(type, request, id);
                 user.setReportTime();
