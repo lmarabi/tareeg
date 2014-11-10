@@ -316,7 +316,7 @@ public class KMLGenerator {
         if (scanner.hasNext()) {
             String tag;
             List<Long> list = new ArrayList<Long>(2);
-            long id = scanner.nextInt();
+            long id = scanner.nextLong();
             //log(id);
             list.add(scanner.nextLong());
             list.add(scanner.nextLong());

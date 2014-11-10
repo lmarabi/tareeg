@@ -168,20 +168,24 @@ public class Request {
         this.statusLog = new OutputStreamWriter(
                 new FileOutputStream(
                 exportPath + "log.txt"), "UTF-8");
-        this.outwriter[exportType.unsortedNode.ordinal()] =
-                new OutputStreamWriter(
-                new FileOutputStream(
-                exportPath + exportType.unsortedNode.toString() + ".txt"), "UTF-8");
-        this.outwriter[exportType.edge.ordinal()] =
-                new OutputStreamWriter(
-                new FileOutputStream(
-                exportPath + exportType.edge.toString() + ".txt"), "UTF-8");
-        this.outwriter[exportType.wkt.ordinal()] =
-                new OutputStreamWriter(
-                new FileOutputStream(
-                exportPath + exportType.wkt.toString() + ".WKT"), "UTF-8");
-        //outwriter[exportType.node.ordinal()].write("Node_id,latitude,longitude\n");
-        outwriter[exportType.edge.ordinal()].write("Edge_id,Start_Node_id,End_Node_id,Tags\n");
+        if(type.equals(dataType.road_edges)){
+        	this.outwriter[exportType.unsortedNode.ordinal()] =
+                    new OutputStreamWriter(
+                    new FileOutputStream(
+                    exportPath + exportType.unsortedNode.toString() + ".txt"), "UTF-8");
+            this.outwriter[exportType.edge.ordinal()] =
+                    new OutputStreamWriter(
+                    new FileOutputStream(
+                    exportPath + exportType.edge.toString() + ".txt"), "UTF-8");
+            //add header in edge file 
+            outwriter[exportType.edge.ordinal()].write("Edge_id,Start_Node_id,End_Node_id,Tags\n");
+        }else{
+        	this.outwriter[exportType.wkt.ordinal()] =
+                    new OutputStreamWriter(
+                    new FileOutputStream(
+                    exportPath + exportType.wkt.toString() + ".WKT"), "UTF-8");
+        }
+        
         //Set the area of interest in the MBR 
         this.area = new MBR(new Point(maxLat, maxLon), new Point(minLat, minLon));
         // Get the set of Files that intersect with the area.
@@ -198,7 +202,7 @@ public class Request {
 						outwriter[exportType.edge.ordinal()],
 						outwriter[exportType.unsortedNode.ordinal()]);
 			}else{
-				area.rangeQueryRtree(f, outwriter[exportType.edge.ordinal()]);
+				area.rangeQueryRtree(f, outwriter[exportType.wkt.ordinal()]);
 			}
             logEnd("End reading file "+f.getPartition().getName());
         }
@@ -209,19 +213,20 @@ public class Request {
 //            outwriter[exportType.node.ordinal()].write(element.toString()+"\n");
 //        }
         logEnd("end reading files");
-        outwriter[exportType.edge.ordinal()].close();
-        outwriter[exportType.unsortedNode.ordinal()].close();
-        outwriter[exportType.wkt.ordinal()].close();
-        logStart("Remove duplicate nodes");
-        String commandLine = "sh "+System.getProperty("user.dir") + "/getNode.sh "
-                +exportPath + exportType.unsortedNode.toString() + ".txt "
-                +exportPath + exportType.node.toString() + ".txt";
-        System.out.println(commandLine);  
-        Process process = Runtime.getRuntime().exec(commandLine);
-        logEnd("End duplicate nodes");
+        if(type.equals(dataType.road_edges)){
+        	outwriter[exportType.edge.ordinal()].close();
+            outwriter[exportType.unsortedNode.ordinal()].close();
+            logStart("Remove duplicate nodes");
+            String commandLine = "sh "+System.getProperty("user.dir") + "/Extensions/getNode.sh "
+                    +exportPath + exportType.unsortedNode.toString() + ".txt "
+                    +exportPath + exportType.node.toString() + ".txt";
+            System.out.println(commandLine);  
+            Process process = Runtime.getRuntime().exec(commandLine);
+            logEnd("End duplicate nodes");
+        }else{
+        	outwriter[exportType.wkt.ordinal()].close();
+        }
         
-        
-        //Runtime.getRuntime().exec(commandLine);
     }
     
     

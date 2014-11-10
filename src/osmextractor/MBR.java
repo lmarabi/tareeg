@@ -25,6 +25,7 @@ import org.apache.hadoop.io.Text;
 import edu.umn.cs.spatialHadoop.core.RTree;
 import edu.umn.cs.spatialHadoop.core.Rectangle;
 import edu.umn.cs.spatialHadoop.core.ResultCollector;
+import edu.umn.cs.spatialHadoop.osm.OSMEdge;
 import edu.umn.cs.spatialHadoop.osm.OSMPolygon;
 
 /**
@@ -256,57 +257,79 @@ public class MBR {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void smartBuildNodeEdges(Partition part, OutputStreamWriter outEdge, OutputStreamWriter outNode) throws FileNotFoundException, IOException ,OutOfMemoryError{
-        //Write the header of the file
-        BufferedReader reader;
-        reader = new BufferedReader(
-                new InputStreamReader(
-                new FileInputStream(part.getPartition()), "UTF-8"));
-        String tuple;
-        //get the range file
-        while ((tuple = reader.readLine()) != null) {
-            String[] attr = tuple.split(",");
-            if (attr.length == 9) {
-                Point startNode = new Point(attr[1], attr[2], attr[3]);
-                Point endNode = new Point(attr[4], attr[5], attr[6]);
-                MBR edgeMbr;
-                if (startNode.isGreater(endNode)) {
-                    edgeMbr = new MBR(endNode, startNode);
-                } else {
-                    edgeMbr = new MBR(startNode, endNode);
-                }
-                if (this.Intersect(edgeMbr.max, edgeMbr.min)) {
-                    Point tempPoint = new Point();
-                    
-                    if(this.min.getLon() < edgeMbr.min.getLon()){
-                        tempPoint.setLon(edgeMbr.getMin().getLon());
-                    }else{
-                        tempPoint.setLon(this.min.getLon());
-                    }
-                    if(this.min.getLat() < edgeMbr.min.getLat()){
-                        tempPoint.setLat(edgeMbr.getMin().getLat());
-                    }else{
-                        tempPoint.setLat(this.min.getLat());
-                    }
-                    if (part.getArea().insideMBR(tempPoint)) {
-                        outEdge.write(attr[0]);
-                        outEdge.write(",");
-                        outEdge.write(attr[1]);
-                        outEdge.write(",");
-                        outEdge.write(attr[4]);
-                        outEdge.write(",");
-                        outEdge.write(attr[8]);
-                        outEdge.write("\n");
-//                        this.nodehased.add(startNode);
-//                        this.nodehased.add(endNode);
-                        outNode.write(startNode.toString()+"\n");
-                        outNode.write(endNode.toString()+"\n");
-                        
-                    }
-                }
+    public void smartBuildNodeEdges(final Partition part, final OutputStreamWriter outEdge, final OutputStreamWriter outNode) throws FileNotFoundException, IOException ,OutOfMemoryError{
+    	//init Rtree object in the partition 
+    	RTree<OSMEdge> rtree = new RTree<OSMEdge>();
+		rtree.setStockObject(new OSMEdge());
+		Path file = new Path(part.getPartition().getPath());
+		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration();
+		FileSystem fs = file.getFileSystem(conf);
+		FSDataInputStream in = fs.open(file);
+		in.skip(8);
+		rtree.readFields(in);
+		//minlon, minlat , maxlong maxlat 
+		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLat());
+		final MBR querymbr = this;
+		//Collector return the result 
+		ResultCollector<OSMEdge> output = new ResultCollector<OSMEdge>() {
 
-            }
-        }
+			@Override
+			public void collect(OSMEdge arg0) {
+				String tuple = arg0.toText(new Text ()).toString();
+				try {
+					String[] attr = tuple.split(",");
+		            if (attr.length == 9) {
+		                Point startNode = new Point(attr[1], attr[2], attr[3]);
+		                Point endNode = new Point(attr[4], attr[5], attr[6]);
+		                MBR edgeMbr;
+		                if (startNode.isGreater(endNode)) {
+		                    edgeMbr = new MBR(endNode, startNode);
+		                } else {
+		                    edgeMbr = new MBR(startNode, endNode);
+		                }
+		                if (querymbr.Intersect(edgeMbr.max, edgeMbr.min)) {
+		                    Point tempPoint = new Point();
+		                    
+		                    if(querymbr.min.getLon() < edgeMbr.min.getLon()){
+		                        tempPoint.setLon(edgeMbr.getMin().getLon());
+		                    }else{
+		                        tempPoint.setLon(querymbr.min.getLon());
+		                    }
+		                    if(querymbr.min.getLat() < edgeMbr.min.getLat()){
+		                        tempPoint.setLat(edgeMbr.getMin().getLat());
+		                    }else{
+		                        tempPoint.setLat(querymbr.min.getLat());
+		                    }
+		                    if (part.getArea().insideMBR(tempPoint)) {
+		                        outEdge.write(attr[0]);
+		                        outEdge.write(",");
+		                        outEdge.write(attr[1]);
+		                        outEdge.write(",");
+		                        outEdge.write(attr[4]);
+		                        outEdge.write(",");
+		                        outEdge.write(attr[8]);
+		                        outEdge.write("\n");
+//		                        this.nodehased.add(startNode);
+//		                        this.nodehased.add(endNode);
+		                        outNode.write(startNode.toString()+"\n");
+		                        outNode.write(endNode.toString()+"\n");
+		                        
+		                    }
+		                }
+
+		            }
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		};
+		
+		int results = rtree.search(mbr, output);
+		System.out.println("number of restuts: "+results);
+        
     }
     
     
@@ -331,7 +354,8 @@ public class MBR {
 		FSDataInputStream in = fs.open(file);
 		in.skip(8);
 		rtree.readFields(in);
-		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLon());
+		//minlon, minlat , maxlong maxlat 
+		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLat());
 
 		//Collector return the result 
 		ResultCollector<OSMPolygon> output = new ResultCollector<OSMPolygon>() {

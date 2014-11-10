@@ -25,7 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.mail.MessagingException;
+
+import edu.umn.cs.spatialHadoop.osm.OSMToKML;
 
 /**
  *
@@ -45,7 +48,7 @@ public class Main {
         neighborhood_edges, administrative_edges, postal_edges,
         maritime_edges, political_edges, national_edges, coast_edges;
     }
-    public static String folderPath = System.getProperty("user.dir") + "/data/";
+    public static String folderPath = "/export/scratch2/louai/osm/indices/";
     public static String exportPath = System.getProperty("user.dir") + "/userData/";
     public static String emailPath = System.getProperty("user.dir") + "/email/";
     public static String emailFlag;
@@ -78,10 +81,10 @@ public class Main {
 //                args[0] = "RAMtest";
 //                args[1] = "louai@cs.umn.edu";
 //                args[2] = "road_edges";
-//                args[3] = "21.541713013778292";//maxLat
-//                args[4] = "40.57242393493422";//maxLon
-//                args[5] = "21.396020222896393";// minLat
-//                args[6] = "40.40453910827428";// miLon
+//                args[3] = "19.0823811";//"29.71606047815052";//maxLat
+//                args[4] = "-20.8590143";//"-82.2503251624035";//maxLon
+//                args[5] = "16.4998031";//"29.5886598210803";// minLat
+//                args[6] = "-34.3882769";//"-82.44189925908323";// miLon
 //                args[10] = "0";
                 folderPath = args[7];
                 exportPath = args[8];
@@ -103,7 +106,8 @@ public class Main {
                 RegisterToLog(user.toString());
                 request.GetSmartOutput(id, args[3], args[4], args[5], args[6], folderPath, exportPath,type);
 
-                GenerateKmlShapeFiles(type, request, id);
+				GenerateKmlShapeFiles(type, request, id);
+
                 user.setReportTime();
                 if (emailFlag.equals("1")) {
                     Emailer.sendEmail(user, 1);
@@ -214,19 +218,19 @@ public class Main {
     private static void GenerateKmlShapeFiles(dataType type, Request request, String id)
             throws IOException {
         if (type.equals(dataType.road_edges)
-                || type.equals(dataType.river_edges)
-                || type.equals(dataType.coast_edges)
-                || type.equals(dataType.border_edges)
-                || type.equals(dataType.administrative_edges)
-                || type.equals(dataType.city_edges)
-                || type.equals(dataType.district_edges)
-                || type.equals(dataType.maritime_edges)
-                || type.equals(dataType.national_edges)
-                || type.equals(dataType.neighborhood_edges)
-                || type.equals(dataType.political_edges)
-                || type.equals(dataType.postal_edges)
-                || type.equals(dataType.region_edges)
-                || type.equals(dataType.region_edges)
+//                || type.equals(dataType.river_edges)
+//                || type.equals(dataType.coast_edges)
+//                || type.equals(dataType.border_edges)
+//                || type.equals(dataType.administrative_edges)
+//                || type.equals(dataType.city_edges)
+//                || type.equals(dataType.district_edges)
+//                || type.equals(dataType.maritime_edges)
+//                || type.equals(dataType.national_edges)
+//                || type.equals(dataType.neighborhood_edges)
+//                || type.equals(dataType.political_edges)
+//                || type.equals(dataType.postal_edges)
+//                || type.equals(dataType.region_edges)
+//                || type.equals(dataType.region_edges)
                 ) {
             request.logStart("Generate KML file");
             kmlgenerator.KMLGenerator.runKMLConverterLine(
@@ -235,16 +239,19 @@ public class Main {
             request.logEnd("end generate KML file");
             
         } else {
-            request.logStart("Generate KML file");
-            kmlgenerator.KMLGenerator.runKMLConverter(
-                    exportPath + id + "/" + "edge.txt",
-                    exportPath + id + "/" + "node.txt");
-            request.logEnd("end generate KML file");
+        	//Generate kml file
+        	String arg0[] = {
+        			exportPath + id + "/" + "wkt.WKT",
+        			exportPath + id + "/" + "result.kml"
+        	}; 
+        	OSMToKML.main(arg0);
         }
+    	
+        
         
         //Generate Shape file 
             request.logStart("Generate shape file");
-            String commandLine = "sh " + System.getProperty("user.dir") + "/kml2shape.sh "
+            String commandLine = "sh " + System.getProperty("user.dir") + "/Extensions/kml2shape.sh "
                     + exportPath + id + "/" + "result.kml "
                     + exportPath + id + "/";
             System.out.println(commandLine);
