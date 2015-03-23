@@ -61,7 +61,7 @@ public class Main {
     public static void main(String args[]) throws MessagingException {
         User user = new User();
         Request request = new Request();
-//        args = new String[11]; // delete me after finish
+        args = new String[11]; // delete me after finish
         if (args.length != 11) {
             System.out.println("Argument of this program ");
             System.out.println("<name>");
@@ -78,17 +78,17 @@ public class Main {
         } else {
             try {
                 //21.541713013778292 40.57242393493422 21.396020222896393 40.40453910827428
-//                args[0] = "RAMtest";
-//                args[1] = "louai@cs.umn.edu";
-//                args[2] = "road_edges";
-//                args[3] = "19.0823811";//"29.71606047815052";//maxLat
-//                args[4] = "-20.8590143";//"-82.2503251624035";//maxLon
-//                args[5] = "16.4998031";//"29.5886598210803";// minLat
-//                args[6] = "-34.3882769";//"-82.44189925908323";// miLon
-//                args[10] = "0";
-                folderPath = args[7];
-                exportPath = args[8];
-                emailPath = args[9];
+                args[0] = "RAMtest";
+                args[1] = "louai@cs.umn.edu";
+                args[2] = "road_edges";
+                args[3] = "19.0823811";//"29.71606047815052";//maxLat
+                args[4] = "-20.8590143";//"-82.2503251624035";//maxLon
+                args[5] = "16.4998031";//"29.5886598210803";// minLat
+                args[6] = "-34.3882769";//"-82.44189925908323";// miLon
+                args[10] = "0";
+//                folderPath = args[7];
+//                exportPath = args[8];
+//                emailPath = args[9];
                 emailFlag = args[10];
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
