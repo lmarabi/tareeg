@@ -36,6 +36,8 @@ public class KMLGenerator {
 //        runKMLConverter(EDGE_FILE, NODE_FILE);
         runKMLConverterLine(EDGE_FILE, NODE_FILE);
     }
+    
+    
 
     public static void runKMLConverterLine(String edge, String node) {
         //shapeType = "lines";

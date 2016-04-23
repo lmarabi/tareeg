@@ -48,9 +48,9 @@ public class Main {
         neighborhood_edges, administrative_edges, postal_edges,
         maritime_edges, political_edges, national_edges, coast_edges;
     }
-    public static String folderPath = "/export/scratch/louai/scratch1/workspace/dataset/osm/osmIndex/"; 
-
-    		//"/Users/louai/MEGA/antProjects/dataset/osm/"; 
+    public static String folderPath = "/Users/louai/MEGA/antProjects/dataset/osm/";   
+    									//"/export/scratch/louai/scratch1/workspace/dataset/osm/osmIndex/";
+ 
     public static String exportPath = System.getProperty("user.dir") + "/userData/";
     public static String emailPath = System.getProperty("user.dir") + "/email/";
     public static String emailFlag;
@@ -256,7 +256,7 @@ public class Main {
         //Generate Shape file 
             request.logStart("Generate shape file");
             String commandLine = "sh " + System.getProperty("user.dir") + "/Extensions/kml2shape.sh "
-                    + exportPath + id + "/" +id+ "_result.kml "
+                    + exportPath + id + "/" + id+".KML "
                     + exportPath + id + "/";
             System.out.println(commandLine);
             Process process = Runtime.getRuntime().exec(commandLine);

@@ -265,7 +265,7 @@ public class MBR {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void smartBuildNodeEdges(final Partition part, final OutputStreamWriter outEdge, final OutputStreamWriter outNode, final OutputStreamWriter wkt, final OutputStreamWriter resultWriter) throws FileNotFoundException, IOException ,OutOfMemoryError{
+    public void smartBuildNodeEdges(final Partition part, final OutputStreamWriter outEdge, final OutputStreamWriter outNode, final OutputStreamWriter wkt, final OutputStreamWriter resultWriter,  final OutputStreamWriter kmlwriter) throws FileNotFoundException, IOException ,OutOfMemoryError{
     	//init Rtree object in the partition 
     	RTree<OSMEdge> rtree = new RTree<OSMEdge>();
 		rtree.setStockObject(new OSMEdge());
@@ -323,6 +323,14 @@ public class MBR {
 		                        outNode.write(startNode.toString()+"\n");
 		                        outNode.write(endNode.toString()+"\n");
 		                        wkt.write(attr[0]+"\t"+"LINESTRING ("+startNode.getX()+" "+startNode.getY()+", " +endNode.getX()+" "+endNode.getY()+")"+"\t"+attr[8].replace("\"","")+"\n");
+		                        String tags = attr[8].replace("&", "&amp;");
+		                        tags = tags.replace("<", "&lt;");
+		                        tags = tags.replace(">", "&gt;");
+		                        kmlwriter.write("\n   <Placemark>\n    <name>line " + attr[0] + "</name>\n    <description>" + tags + "</description>");
+		                        kmlwriter.write("\n    <LineString>\n     <tessellate>1</tessellate>\n     <altitudeMode>relativeToGround</altitudeMode>\n     <coordinates>");
+		                        kmlwriter.write(startNode.getX()+","+startNode.getY()+ " ");
+		                        kmlwriter.write(endNode.getX()+","+endNode.getY()+ " ");
+		                        kmlwriter.write("</coordinates>\n    </LineString>\n   </Placemark>");
 		                       resultWriter.write(tuple+"\n");
 		                        
 		                    }
