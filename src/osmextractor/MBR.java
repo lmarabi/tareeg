@@ -265,7 +265,7 @@ public class MBR {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void smartBuildNodeEdges(final Partition part, final OutputStreamWriter outEdge, final OutputStreamWriter outNode) throws FileNotFoundException, IOException ,OutOfMemoryError{
+    public void smartBuildNodeEdges(final Partition part, final OutputStreamWriter outEdge, final OutputStreamWriter outNode, final OutputStreamWriter wkt, final OutputStreamWriter resultWriter) throws FileNotFoundException, IOException ,OutOfMemoryError{
     	//init Rtree object in the partition 
     	RTree<OSMEdge> rtree = new RTree<OSMEdge>();
 		rtree.setStockObject(new OSMEdge());
@@ -284,6 +284,7 @@ public class MBR {
 			@Override
 			public void collect(OSMEdge arg0) {
 				String tuple = arg0.toText(new Text ()).toString();
+				
 				try {
 					String[] attr = tuple.split(",");
 		            if (attr.length == 9) {
@@ -321,6 +322,8 @@ public class MBR {
 //		                        this.nodehased.add(endNode);
 		                        outNode.write(startNode.toString()+"\n");
 		                        outNode.write(endNode.toString()+"\n");
+		                        wkt.write(attr[0]+"\t"+"LINESTRING ("+startNode.getX()+" "+startNode.getY()+", " +endNode.getX()+" "+endNode.getY()+")"+"\t"+attr[8].replace("\"","")+"\n");
+		                       resultWriter.write(tuple+"\n");
 		                        
 		                    }
 		                }
@@ -363,7 +366,7 @@ public class MBR {
 		in.skip(8);
 		rtree.readFields(in);
 		//minlon, minlat , maxlong maxlat 
-		Rectangle mbr = new Rectangle(this.min.getY(), this.min.getX(),this.max.getY(), this.max.getX());
+		Rectangle mbr = new Rectangle(this.min.getX(), this.min.getY(),this.max.getX(), this.max.getY());
 
 		//Collector return the result 
 		ResultCollector<OSMPolygon> output = new ResultCollector<OSMPolygon>() {
