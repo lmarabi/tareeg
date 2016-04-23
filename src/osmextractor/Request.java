@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.umn.cs.spatialHadoop.osm.OSMToKML;
 import osmextractor.Main.dataType;
 
 /**
@@ -57,8 +58,8 @@ public class Request {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public void GetResult(String id, double maxLat, double maxLon, double minLat,
-            double minLon, String dataPath, String exportPath)
+    public void GetResult(String id,  double minLon,  double minLat, double maxLon,  double maxLat
+            , String dataPath, String exportPath)
             throws FileNotFoundException, UnsupportedEncodingException, IOException {
         this.outwriter = new OutputStreamWriter[exportType.values().length];
         exportPath +=  id + "/";
@@ -77,7 +78,7 @@ public class Request {
                 new FileOutputStream(
                 exportPath + exportType.unsortedNode.toString() + ".txt"), "UTF-8");
         //Set the area of interest in the MBR 
-        this.area = new MBR(new Point(maxLat, maxLon), new Point(minLat, minLon));
+        this.area = new MBR(new Point(minLon, minLat),new Point(maxLon,maxLat));
         // Get the set of Files that intersect with the area.
         List<Partition> files = ReadMaster(dataPath);
         //read eachfile and output the result.
@@ -111,8 +112,8 @@ public class Request {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public void GetOutput(String id, String maxLat, String maxLon, String minLat,
-            String minLon, String dataPath, String exportPath)
+    public void GetOutput(String id,  String minLon,  String minLat, String maxLon,  String maxLat
+            , String dataPath, String exportPath)
             throws FileNotFoundException, UnsupportedEncodingException, IOException {
         this.outwriter = new OutputStreamWriter[exportType.values().length];
         exportPath +=  id + "/";
@@ -127,7 +128,7 @@ public class Request {
                 new FileOutputStream(
                 exportPath + exportType.edge.toString() + ".txt"), "UTF-8");
         //Set the area of interest in the MBR 
-        this.area = new MBR(new Point(maxLat, maxLon), new Point(minLat, minLon));
+        this.area = new MBR(new Point(minLon, minLat),new Point(maxLon,maxLat));
         // Get the set of Files that intersect with the area.
         logStart("start reading the master files");
         List<Partition> files = ReadMaster(dataPath);
@@ -158,8 +159,8 @@ public class Request {
         outwriter[exportType.node.ordinal()].close();
     }
     
-    public void GetSmartOutput(String id, String maxLat, String maxLon, String minLat,
-            String minLon, String dataPath, String exportPath, dataType type)
+    public void GetSmartOutput(String id, String minLon,  String minLat, String maxLon,  String maxLat
+    		, String dataPath, String exportPath, dataType type)
             throws FileNotFoundException, UnsupportedEncodingException, IOException {
         this.outwriter = new OutputStreamWriter[exportType.values().length];
         exportPath +=  id + "/";
@@ -168,7 +169,7 @@ public class Request {
         this.statusLog = new OutputStreamWriter(
                 new FileOutputStream(
                 exportPath + "log.txt"), "UTF-8");
-        if(type.equals(dataType.road_edges)){
+        if(type.equals(dataType.road_edges)|| type.equals(dataType.river_edges)){
         	this.outwriter[exportType.unsortedNode.ordinal()] =
                     new OutputStreamWriter(
                     new FileOutputStream(
@@ -187,7 +188,7 @@ public class Request {
         }
         
         //Set the area of interest in the MBR 
-        this.area = new MBR(new Point(maxLat, maxLon), new Point(minLat, minLon));
+        this.area = new MBR(new Point(minLon, minLat),new Point(maxLon,maxLat));
         // Get the set of Files that intersect with the area.
         logStart("start reading the master files");
         List<Partition> files = ReadMaster(dataPath);
@@ -197,7 +198,7 @@ public class Request {
         for (Partition f : files) {
             logStart("Start Reading file "+f.getPartition().getName());
             //Build the edge and the node  from the file 
-			if (type.equals(dataType.road_edges)) {
+			if (type.equals(dataType.road_edges) || type.equals(dataType.river_edges)) {
 				area.smartBuildNodeEdges(f,
 						outwriter[exportType.edge.ordinal()],
 						outwriter[exportType.unsortedNode.ordinal()]);
@@ -213,9 +214,14 @@ public class Request {
 //            outwriter[exportType.node.ordinal()].write(element.toString()+"\n");
 //        }
         logEnd("end reading files");
-        if(type.equals(dataType.road_edges)){
+        if(type.equals(dataType.road_edges)|| type.equals(dataType.river_edges)){
         	outwriter[exportType.edge.ordinal()].close();
             outwriter[exportType.unsortedNode.ordinal()].close();
+        	String arg0[] = {
+        			exportPath + "unsortedNode.txt",
+        			exportPath + id +"_result.kml"
+        	}; 
+        	OSMToKML.main(arg0);
             logStart("Remove duplicate nodes");
             String commandLine = "sh "+System.getProperty("user.dir") + "/Extensions/getNode.sh "
                     +exportPath + exportType.unsortedNode.toString() + ".txt "
@@ -285,7 +291,7 @@ public class Request {
             // #filenumber,minLat,minLon,maxLat,maxLon
             if (temp.length == 8) {
             	Partition part = new Partition(line,path);
-                if (area.Intersect(part.getArea().getMax(), part.getArea().getMin())) {
+                if (area.Intersect(part.getArea().getMin(),part.getArea().getMax())) {
                     result.add(part);
                 }
             }

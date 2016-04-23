@@ -44,9 +44,9 @@ public class MBR {
     public MBR() {
     }
 
-    public MBR(Point max, Point min) {
-        this.max = max;
+    public MBR(Point min, Point max) {
         this.min = min;
+        this.max = max;
         this.edges = new ArrayList<Edge>();
         this.nodes = new ArrayList<Point>();
         this.nodehased = new HashSet<Point>(new LinkedHashSet<Point>());
@@ -85,24 +85,32 @@ public class MBR {
     /**
      * This method check whether the MBR is intersect with the MB
      *
-     * @param pmax
-     * @param pmin
+     * @param maxPoint
+     * @param minPoint
      * @return true if there is intersect otherwise it will return false
      */
-    public boolean Intersect(Point pmax, Point pmin) {
+    public boolean Intersect(Point minPoint, Point maxPoint) {
+    	MBR RectB = new MBR(minPoint, maxPoint);
+    	MBR RectA = this;
         //RectA1: this.main = x1,y1 ; this.max = x2,y2
         //RectB2: pmin = x3,y3 ; pmax= x4,y4
         //return !(x2 < x3 || x1 > x2 || y2 > y3 || y1 < y4)
         //if (RectA.X1 < RectB.X2 && RectA.X2 > RectB.X1 &&
         //    RectA.Y1 < RectB.Y2 && RectA.Y2 > RectB.Y1) 
-        if (this.min.getLon() < pmax.getLon()
-                && this.max.getLon() > pmin.getLon()
-                && this.min.getLat() < pmax.getLat()
-                && this.max.getLat() > pmin.getLat()) {
-            return true;
-        } else {
-            return false;
+//        if (this.min.getY() < maxPoint.getY()
+//                && this.max.getY() > minPoint.getY()
+//                && this.min.getX() < maxPoint.getX()
+//                && this.max.getX() > minPoint.getX()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+        if (RectA.min.getX() < RectB.max.getX() && RectA.max.getX() > RectB.min.getX() &&
+            RectA.min.getY() < RectB.max.getY() && RectA.max.getY() > RectB.min.getY()){
+        	return true;
         }
+        return false;
+    	
     }
 
     /**
@@ -112,10 +120,10 @@ public class MBR {
      * @return true if the point inside the area other wise return false
      */
     public boolean insideMBR(Point point) {
-        if (point.getLat() <= this.max.getLat()
-                && point.getLat() >= this.min.getLat()
-                && point.getLon() <= this.max.getLon()
-                && point.getLon() >= this.min.getLon()) {
+        if (point.getX() <= this.max.getX()
+                && point.getX() >= this.min.getX()
+                && point.getY() <= this.max.getY()
+                && point.getY() >= this.min.getY()) {
             return true;
         } else {
             return false;
@@ -268,7 +276,7 @@ public class MBR {
 		in.skip(8);
 		rtree.readFields(in);
 		//minlon, minlat , maxlong maxlat 
-		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLat());
+		Rectangle mbr = new Rectangle(this.min.getY(), this.min.getX(),this.max.getY(), this.max.getX());
 		final MBR querymbr = this;
 		//Collector return the result 
 		ResultCollector<OSMEdge> output = new ResultCollector<OSMEdge>() {
@@ -283,22 +291,22 @@ public class MBR {
 		                Point endNode = new Point(attr[4], attr[5], attr[6]);
 		                MBR edgeMbr;
 		                if (startNode.isGreater(endNode)) {
-		                    edgeMbr = new MBR(endNode, startNode);
-		                } else {
 		                    edgeMbr = new MBR(startNode, endNode);
+		                } else {
+		                    edgeMbr = new MBR(endNode, startNode);
 		                }
 		                if (querymbr.Intersect(edgeMbr.max, edgeMbr.min)) {
 		                    Point tempPoint = new Point();
 		                    
-		                    if(querymbr.min.getLon() < edgeMbr.min.getLon()){
-		                        tempPoint.setLon(edgeMbr.getMin().getLon());
+		                    if(querymbr.min.getY() < edgeMbr.min.getY()){
+		                        tempPoint.setY(edgeMbr.getMin().getY());
 		                    }else{
-		                        tempPoint.setLon(querymbr.min.getLon());
+		                        tempPoint.setY(querymbr.min.getY());
 		                    }
-		                    if(querymbr.min.getLat() < edgeMbr.min.getLat()){
-		                        tempPoint.setLat(edgeMbr.getMin().getLat());
+		                    if(querymbr.min.getX() < edgeMbr.min.getX()){
+		                        tempPoint.setX(edgeMbr.getMin().getX());
 		                    }else{
-		                        tempPoint.setLat(querymbr.min.getLat());
+		                        tempPoint.setX(querymbr.min.getX());
 		                    }
 		                    if (part.getArea().insideMBR(tempPoint)) {
 		                        outEdge.write(attr[0]);
@@ -355,7 +363,7 @@ public class MBR {
 		in.skip(8);
 		rtree.readFields(in);
 		//minlon, minlat , maxlong maxlat 
-		Rectangle mbr = new Rectangle(this.min.getLon(), this.min.getLat(),this.max.getLon(), this.max.getLat());
+		Rectangle mbr = new Rectangle(this.min.getY(), this.min.getX(),this.max.getY(), this.max.getX());
 
 		//Collector return the result 
 		ResultCollector<OSMPolygon> output = new ResultCollector<OSMPolygon>() {

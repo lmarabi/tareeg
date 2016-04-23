@@ -24,9 +24,9 @@ public class Partition {
 		String[] temp = line.split(",");
 		if (temp.length == 8) {
 			this.id = Integer.parseInt(temp[0]);
-			Point pointMax = new Point(temp[4], temp[3]);
 			Point pointMin = new Point(temp[2], temp[1]);
-			this.area = new MBR(pointMax, pointMin);
+			Point pointMax = new Point(temp[4], temp[3]);
+			this.area = new MBR(pointMin,pointMax);
 			this.partition = new File(path + temp[7]);
 			this.cardinality = Long.parseLong(temp[5]);
 		}

@@ -126,9 +126,9 @@ public class User {
     
      public String getRequestParameter(){
          return "Extracted data: "+this.extractedType.toString().replace("_", " ") +"\n"
-                 + "Area as (lattitude,longitude):  ("+this.max.getLat()+","
-                 + this.max.getLon()+") - ("+this.min.getLat()+","
-                 + this.min.getLon()+")\n"
+                 + "Area as (lattitude,longitude):  ("+this.max.getX()+","
+                 + this.max.getY()+") - ("+this.min.getX()+","
+                 + this.min.getY()+")\n"
                  + location
                  + " \nRequested on :"+ this.requestTime + "\n"
                  + "Reported on :"+ this.reportTime;
@@ -154,12 +154,12 @@ public class User {
          
         String semanticlocation = null;
 
-        double lat = (this.min.getLat() + this.max.getLat()) / 2;
-        double lng = (this.min.getLon() + this.max.getLon()) / 2;
-        double n = this.max.getLat();
-        double w = this.max.getLon();
-        double s = this.min.getLat();
-        double e = this.min.getLon();
+        double lat = (this.min.getX() + this.max.getX()) / 2;
+        double lng = (this.min.getY() + this.max.getY()) / 2;
+        double n = this.max.getX();
+        double w = this.max.getY();
+        double s = this.min.getX();
+        double e = this.min.getY();
 
 
         URL geourl;
@@ -222,10 +222,10 @@ public class User {
         return  this.id+","+dateFormat.format(date)+","+this.name+","+this.email+","+
                 this.extractedType.toString()+","+
                 //this.reportTime+","+
-                this.max.getLat()+","+
-                this.max.getLon()+","+
-                this.min.getLat()+","+
-                this.min.getLon()+","+location;
+                this.max.getX()+","+
+                this.max.getY()+","+
+                this.min.getX()+","+
+                this.min.getY()+","+location;
     }
     
     

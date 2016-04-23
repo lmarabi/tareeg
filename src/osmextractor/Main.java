@@ -48,7 +48,7 @@ public class Main {
         neighborhood_edges, administrative_edges, postal_edges,
         maritime_edges, political_edges, national_edges, coast_edges;
     }
-    public static String folderPath = "/export/scratch2/louai/osm/indices/";
+    public static String folderPath = "/export/scratch/louai/scratch1/workspace/dataset/osm/osmIndex/";
     public static String exportPath = System.getProperty("user.dir") + "/userData/";
     public static String emailPath = System.getProperty("user.dir") + "/email/";
     public static String emailFlag;
@@ -80,11 +80,11 @@ public class Main {
                 //21.541713013778292 40.57242393493422 21.396020222896393 40.40453910827428
                 args[0] = "RAMtest";
                 args[1] = "louai@cs.umn.edu";
-                args[2] = "road_edges";
-                args[3] = "19.0823811";//"29.71606047815052";//maxLat
-                args[4] = "-20.8590143";//"-82.2503251624035";//maxLon
-                args[5] = "16.4998031";//"29.5886598210803";// minLat
-                args[6] = "-34.3882769";//"-82.44189925908323";// miLon
+                args[2] = "river_edges";
+                args[3] = "-93.67492675781862";//"29.71606047815052";//maxLat // New minLon = x1
+                args[4] = "44.8451592777191";//"-82.2503251624035";//maxLon // New minLat = y1 
+                args[5] = "-92.98622131348593";//"29.5886598210803";// minLat // New maxLon = x2 
+                args[6] = "45.16073744197329";//"-82.44189925908323";// miLon // new maxLat= y2 
                 args[10] = "0";
 //                folderPath = args[7];
 //                exportPath = args[8];
@@ -217,8 +217,8 @@ public class Main {
 
     private static void GenerateKmlShapeFiles(dataType type, Request request, String id)
             throws IOException {
-        if (type.equals(dataType.road_edges)
-//                || type.equals(dataType.river_edges)
+        if (type.equals(dataType.road_edges )
+                || type.equals(dataType.river_edges)
 //                || type.equals(dataType.coast_edges)
 //                || type.equals(dataType.border_edges)
 //                || type.equals(dataType.administrative_edges)
@@ -232,17 +232,19 @@ public class Main {
 //                || type.equals(dataType.region_edges)
 //                || type.equals(dataType.region_edges)
                 ) {
-            request.logStart("Generate KML file");
-            kmlgenerator.KMLGenerator.runKMLConverterLine(
-                    exportPath + id + "/" + "edge.txt",
-                    exportPath + id + "/" + "node.txt");
-            request.logEnd("end generate KML file");
+        	
+        	//Generate kml file
+//            request.logStart("Generate KML file");
+//            kmlgenerator.KMLGenerator.runKMLConverterLine(
+//                    exportPath + id + "/" + "edge.txt",
+//                    exportPath + id + "/" + "node.txt");
+//            request.logEnd("end generate KML file");
             
         } else {
         	//Generate kml file
         	String arg0[] = {
         			exportPath + id + "/" + "wkt.WKT",
-        			exportPath + id + "/" + "result.kml"
+        			exportPath + id + "/" + "result.kml "
         	}; 
         	OSMToKML.main(arg0);
         }
@@ -252,7 +254,7 @@ public class Main {
         //Generate Shape file 
             request.logStart("Generate shape file");
             String commandLine = "sh " + System.getProperty("user.dir") + "/Extensions/kml2shape.sh "
-                    + exportPath + id + "/" + "result.kml "
+                    + exportPath + id + "/" +id+ "_result.kml "
                     + exportPath + id + "/";
             System.out.println(commandLine);
             Process process = Runtime.getRuntime().exec(commandLine);
