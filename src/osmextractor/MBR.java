@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -105,8 +106,8 @@ public class MBR {
 //        } else {
 //            return false;
 //        }
-        if (RectA.min.getX() < RectB.max.getX() && RectA.max.getX() > RectB.min.getX() &&
-            RectA.min.getY() < RectB.max.getY() && RectA.max.getY() > RectB.min.getY()){
+        if (RectA.min.getX() <= RectB.max.getX() && RectA.max.getX() >= RectB.min.getX() &&
+            RectA.min.getY() <= RectB.max.getY() && RectA.max.getY() >= RectB.min.getY()){
         	return true;
         }
         return false;
@@ -363,7 +364,7 @@ public class MBR {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void rangeQueryRtree(Partition part, final OutputStreamWriter kwtWriter) throws FileNotFoundException, IOException ,OutOfMemoryError{
+    public void rangeQueryRtree(Partition part, final OutputStreamWriter kwtWriter ) throws FileNotFoundException, IOException ,OutOfMemoryError{
     	//init Rtree object in the partition 
     	RTree<OSMPolygon> rtree = new RTree<OSMPolygon>();
 		rtree.setStockObject(new OSMPolygon());
@@ -381,9 +382,29 @@ public class MBR {
 
 			@Override
 			public void collect(OSMPolygon arg0) {
-				System.out.println(arg0.toText(new Text ()));
+//				System.out.println(arg0.toText(new Text ()));
+//				System.out.println(arg0.id);
+//				System.out.println(arg0.geom.toString());
+// 				String geometry = arg0.geom.toString().replace("POLYGON ((", "");
+//				geometry = geometry.replace("))", "");
+//				String[] points = geometry.split(",");
+//				HashMap<String,String> tag = (HashMap<String, String>) arg0.tags;
+//				String tags = tag.toString();
+//				tags = tags.replace("&", "&amp;");
+//				tags = tags.replace("<", "&lt;");
+//				tags = tags.replace(">", "&gt;");
 				try {
 					kwtWriter.write(arg0.toText(new Text()).toString()+"\n");
+//					kmlWriter.write("\n   <Placemark>\n    <name>polygon " + arg0.id + "</name>\n    <description>" + tags + "</description>");
+//                    kmlWriter.write("\n    <Polygon>\n     <tessellate>1</tessellate>\n     <altitudeMode>relativeToGround</altitudeMode>\n     <outerBoundaryIs>\n      <LinearRing>\n       <coordinates>");
+//                    String[] geolocation;
+//                    for(int i=0; i< (points.length-1); i++){
+//                    	geolocation = points[i].split(" ");
+//                    	kmlWriter.write(geolocation[0]+ "," + geolocation[1] + " ");
+//                    }
+//                    geolocation = points[points.length-1].split(" ");
+//                    kmlWriter.write(geolocation[0]+ "," + geolocation[1]);
+//                    kmlWriter.write("</coordinates>\n      </LinearRing>\n     </outerBoundaryIs>\n    </Polygon>\n   </Placemark>");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

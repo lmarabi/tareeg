@@ -45,7 +45,7 @@ public class Main {
         cemetery_edges, sport_edges, border_edges, resident_edges,
         commerce_edges, worship_edges, services_edges, education_edges,
         desert_edges, region_edges, district_edges, city_edges,
-        neighborhood_edges, administrative_edges, postal_edges,
+        neighborhood_edges, administrative_edges, postal_codes_edges,
         maritime_edges, political_edges, national_edges, coast_edges;
     }
     public static String folderPath = "/Users/louai/MEGA/antProjects/dataset/osm/";   
@@ -82,11 +82,11 @@ public class Main {
                 //21.541713013778292 40.57242393493422 21.396020222896393 40.40453910827428
                 args[0] = "RAMtest";
                 args[1] = "louai@cs.umn.edu";
-                args[2] = "river_edges";
-                args[3] = "-93.67492675781862";//"29.71606047815052";//maxLat // New minLon = x1
-                args[4] = "44.8451592777191";//"-82.2503251624035";//maxLon // New minLat = y1 
-                args[5] = "-92.98622131348593";//"29.5886598210803";// minLat // New maxLon = x2 
-                args[6] = "45.16073744197329";//"-82.44189925908323";// miLon // new maxLat= y2 
+                args[2] = "postal_codes_edges";
+                args[3] = "-171.9235064";
+                args[4] = "-33.8163272"; 
+                args[5] = "-75.310208"; 
+                args[6] = "36.0113372"; 
                 args[10] = "0";
 //                folderPath = args[7];
 //                exportPath = args[8];
@@ -108,7 +108,7 @@ public class Main {
                 RegisterToLog(user.toString());
                 request.GetSmartOutput(id, args[3], args[4], args[5], args[6], folderPath, exportPath,type);
 
-				GenerateKmlShapeFiles(type, request, id);
+                GenerateShapeFile(type, request, id);
 
                 user.setReportTime();
                 if (emailFlag.equals("1")) {
@@ -219,48 +219,29 @@ public class Main {
 
     private static void GenerateKmlShapeFiles(dataType type, Request request, String id)
             throws IOException {
-        if (type.equals(dataType.road_edges )
-                || type.equals(dataType.river_edges)
-//                || type.equals(dataType.coast_edges)
-//                || type.equals(dataType.border_edges)
-//                || type.equals(dataType.administrative_edges)
-//                || type.equals(dataType.city_edges)
-//                || type.equals(dataType.district_edges)
-//                || type.equals(dataType.maritime_edges)
-//                || type.equals(dataType.national_edges)
-//                || type.equals(dataType.neighborhood_edges)
-//                || type.equals(dataType.political_edges)
-//                || type.equals(dataType.postal_edges)
-//                || type.equals(dataType.region_edges)
-//                || type.equals(dataType.region_edges)
-                ) {
-        	
-        	//Generate kml file
-//            request.logStart("Generate KML file");
-//            kmlgenerator.KMLGenerator.runKMLConverterLine(
-//                    exportPath + id + "/" + "edge.txt",
-//                    exportPath + id + "/" + "node.txt");
-//            request.logEnd("end generate KML file");
-            
-        } else {
+       
         	//Generate kml file
         	String arg0[] = {
-        			exportPath + id + "/" + "wkt.WKT",
-        			exportPath + id + "/" + "result.kml "
+        			exportPath + id + "/" + "wkt.WKT ",
+        			exportPath + id + "/" + "result.kml"
         	}; 
+        	System.out.println(arg0[0]);
+        	System.out.println(arg0[1]);
         	OSMToKML.main(arg0);
-        }
-    	
-        
-        
-        //Generate Shape file 
-            request.logStart("Generate shape file");
-            String commandLine = "sh " + System.getProperty("user.dir") + "/Extensions/kml2shape.sh "
-                    + exportPath + id + "/" + id+".KML "
-                    + exportPath + id + "/";
-            System.out.println(commandLine);
-            Process process = Runtime.getRuntime().exec(commandLine);
-            request.logEnd("End generating shape file");
+       
+    }
+    
+    
+    public static void GenerateShapeFile(dataType type, Request request, String id)
+            throws IOException {
+    	//Generate Shape file 
+        request.logStart("Generate shape file");
+        String commandLine = "sh " + System.getProperty("user.dir") + "/Extensions/kml2shape.sh "
+                + exportPath + id + "/kml.KML "
+                + exportPath + id + "/";
+        System.out.println(commandLine);
+        Process process = Runtime.getRuntime().exec(commandLine);
+        request.logEnd("End generating shape file");
     }
     
    
