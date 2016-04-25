@@ -1,0 +1,79 @@
+	FWTools Binary Distribution for Linux (x86 32bit)
+	=================================================
+
+Version: 2.0.6 (Feb 3, 2008)
+
+This is a binary distribution of OpenEV, GDAL, PROJ.4, and OGDI.  It also
+includes a full Python distribution.  The FWTools series of binary releases
+are not intended to replace the official binary releases of various projects,
+but are intended to provide interim releases between official releases 
+providing bugs fixes, new features and a more broadly configured build (ie. 
+extra formats from GDAL) than the official builds. 
+
+FWTools is built for Linux on 32bit x86 compatible systems, but is known to
+work well on 64bit x86 systems (Intel or AMD).
+
+Component Versions
+------------------
+
+ OpenEV 1.8+ - (CVS) (including Mario B's WMS tool)
+ GDAL - 1.5.0 (trunk).  Includes support (above base formats) for
+        RPF via OGDI, FITS, JPEG2000, DODS, netCDF, HDF, ECW, MrSID, GRIB.
+ OGR - 1.5.0 (trunk) with GML, OGDI, PostGIS, SQLite, VRF/OGDI, MySQL, DODS.
+ PROJ.4 - 4.5.0 (CVS)
+ OGDI 3.1.5
+ MapServer 4.99 (trunk) including Python MapScript
+ Python 2.2.1
+ Gnuplot 3.7.3
+ libtiff 3.8.2+ (CVS)
+ libgeotiff 1.2.4+ (CVS)
+ GEOS 3.0.0rc1
+ libecwj2-3.3 (final)
+ kakadu 5.1
+ GD 2.0.34
+
+
+To Install
+----------
+
+ 1) cd to this directory (eg ~/FWTools). 
+
+ 2) run ./install.sh 
+
+ 3) Add ~/FWTools/bin_safe to your PATH. 
+
+It should not be necessary to modify your default LD_LIBRARY_PATH, PYTHONPATH
+or set any other environment variables.  The install.sh script only modifies
+stuff within the distribution tree.  It does not make another copy of the
+distribution files. 
+
+
+To Run
+------
+
+Once the FWTools/bin_safe directory is in your path, you can use any of the
+commands in that directory, including 'openev' to launch OpenEV with the
+software OpenGL implementation, or 'openev -h' to launch OpenEV using 
+accelerated OpenGL support. 
+
+
+Feedback
+--------
+
+Please send bug reports or feedback on individual packages to the 
+appropriate destination for that package.  Send bug reports on the FWTools
+binary package via the bugzilla listed at:
+
+  http://FWTools.MapTools.Org/
+
+
+On the Web
+----------
+
+  FWTools: http://FWTools.MapTools.Org/
+
+  OpenEV: http://openev.sf.net/
+  GDAL: http://www.gdal.org/ 
+  PROJ.4: http://www.remotesensing.org/proj
+  OGDI: http://ogdi.sourceforge.net/
+  MapServer: http://mapserver.gis.umn.edu/

@@ -1,0 +1,20 @@
+(dp0
+S'True Color Landsat'
+p1
+(dp2
+S'URL'
+p3
+S'http://wms.jpl.nasa.gov/wms.cgi?VERSION=1.1.1&LAYERS=global_mosaic_base&STYLES=visual&FORMAT=image%2Fpng&REQUEST=GetMap&SERVICE=WMS&EXCEPTIONS=application%2Fvnd.ogc.se_xml'
+p4
+sS'Server'
+p5
+S'OnEarth'
+p6
+sS'Name'
+p7
+S'landsat321'
+p8
+sS'Title'
+p9
+g1
+ss.
