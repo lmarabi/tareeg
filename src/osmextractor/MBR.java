@@ -106,8 +106,8 @@ public class MBR {
 //        } else {
 //            return false;
 //        }
-        if (RectA.min.getX() <= RectB.max.getX() && RectA.max.getX() >= RectB.min.getX() &&
-            RectA.min.getY() <= RectB.max.getY() && RectA.max.getY() >= RectB.min.getY()){
+        if (RectA.min.getX() < RectB.max.getX() && RectA.max.getX() > RectB.min.getX() &&
+            RectA.min.getY() < RectB.max.getY() && RectA.max.getY() > RectB.min.getY()){
         	return true;
         }
         return false;
@@ -271,13 +271,14 @@ public class MBR {
     	RTree<OSMEdge> rtree = new RTree<OSMEdge>();
 		rtree.setStockObject(new OSMEdge());
 		Path file = new Path(part.getPartition().getPath());
+		System.out.println(file.toUri().toString());
 		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration();
 		FileSystem fs = file.getFileSystem(conf);
 		FSDataInputStream in = fs.open(file);
 		in.skip(8);
 		rtree.readFields(in);
 		//minlon, minlat , maxlong maxlat 
-		Rectangle mbr = new Rectangle(this.min.getY(), this.min.getX(),this.max.getY(), this.max.getX());
+		Rectangle mbr = new Rectangle(this.min.getX(), this.min.getY(),this.max.getX(), this.max.getY());
 		final MBR querymbr = this;
 		//Collector return the result 
 		ResultCollector<OSMEdge> output = new ResultCollector<OSMEdge>() {

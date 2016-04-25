@@ -69,10 +69,10 @@ public class Main {
             System.out.println("<name>");
             System.out.println("<email>");
             System.out.println("<type>_edges");
-            System.out.println("<maxLat>");
-            System.out.println("<maxLon>");
-            System.out.println("<minLat>");
-            System.out.println("<minLon>");
+            System.out.println("<minlon>");
+            System.out.println("<minlat>");
+            System.out.println("<maxlon>");
+            System.out.println("<maxlat>");
             System.out.println("<folderPath>");
             System.out.println("<exportPath>");
             System.out.println("<emailPath>");
