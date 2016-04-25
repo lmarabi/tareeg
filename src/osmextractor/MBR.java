@@ -272,7 +272,14 @@ public class MBR {
 		rtree.setStockObject(new OSMEdge());
 		Path file = new Path(part.getPartition().getPath().toString());
 		System.out.println(file.toUri().toString());
-		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration(false);
+	 
+		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration();
+		conf.set("fs.hdfs.impl", 
+		            org.apache.hadoop.hdfs.DistributedFileSystem.class.getName()
+		        );
+		conf.set("fs.file.impl",
+		            org.apache.hadoop.fs.LocalFileSystem.class.getName()
+		        );
 		FileSystem fs = file.getFileSystem(conf);
 		FSDataInputStream in = fs.open(file);
 		in.skip(8);
