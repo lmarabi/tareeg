@@ -270,7 +270,7 @@ public class MBR {
     	//init Rtree object in the partition 
     	RTree<OSMEdge> rtree = new RTree<OSMEdge>();
 		rtree.setStockObject(new OSMEdge());
-		Path file = new Path(part.getPartition().getPath());
+		Path file = new Path(part.getPartition().getPath().toString());
 		System.out.println(file.toUri().toString());
 		org.apache.hadoop.conf.Configuration conf = new  org.apache.hadoop.conf.Configuration();
 		FileSystem fs = file.getFileSystem(conf);
