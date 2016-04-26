@@ -6,6 +6,8 @@ package osmextractor;
 
 import java.io.File;
 
+import osmextractor.Main.dataType;
+
 public class Partition {
 	private int id;
 	private File partition;
@@ -20,12 +22,19 @@ public class Partition {
 	// this.area = area;
 	// }
 
-	public Partition(String line, String path) {
+	public Partition(String line, String path,dataType type) {
 		String[] temp = line.split(",");
 		if (temp.length == 8) {
 			this.id = Integer.parseInt(temp[0]);
-			Point pointMin = new Point(temp[1], temp[2]);
-			Point pointMax = new Point(temp[3], temp[4]);
+			Point pointMin;
+			Point pointMax;
+			if(type.equals(dataType.road_edges)){
+				 pointMin = new Point(temp[2], temp[1]);
+				 pointMax = new Point(temp[4], temp[3]);
+			}else{
+				 pointMin = new Point(temp[1], temp[2]);
+				 pointMax = new Point(temp[3], temp[4]);
+			}
 			this.area = new MBR(pointMin,pointMax);
 			this.partition = new File(path + temp[7]);
 			this.cardinality = Long.parseLong(temp[5]);

@@ -44,124 +44,124 @@ public class Request {
 		return area;
 	}
 
-	/**
-	 * Get the result and remove the redundant edge and nodes
-	 * 
-	 * @param id
-	 * @param maxLat
-	 * @param maxLon
-	 * @param minLat
-	 * @param minLon
-	 * @param dataPath
-	 * @param exportPath
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 */
-	public void GetResult(String id, double minLon, double minLat,
-			double maxLon, double maxLat, String dataPath, String exportPath)
-			throws FileNotFoundException, UnsupportedEncodingException,
-			IOException {
-		this.outwriter = new OutputStreamWriter[exportType.values().length];
-		exportPath += id + "/";
-		File dir = new File(exportPath);
-		dir.mkdir();
-		// this.outwriter[exportType.node.ordinal()] =
-		// new OutputStreamWriter(
-		// new FileOutputStream(
-		// exportPath + exportType.node.toString() + ".txt"), "UTF-8");
-		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
-				new FileOutputStream(exportPath + exportType.edge.toString()
-						+ ".txt"), "UTF-8");
-		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
-				new FileOutputStream(exportPath
-						+ exportType.unsortedNode.toString() + ".txt"), "UTF-8");
-		// Set the area of interest in the MBR
-		this.area = new MBR(new Point(minLon, minLat),
-				new Point(maxLon, maxLat));
-		// Get the set of Files that intersect with the area.
-		List<Partition> files = ReadMaster(dataPath);
-		// read eachfile and output the result.
-		for (Partition f : files) {
-			// Build the edge and the node from the file
-			area.BuildNodeEdges(f.getPartition());
-		}
-		// Write the output in the file
-		for (Point p : area.getNodes()) {
-			outwriter[exportType.node.ordinal()].write(p.toString() + "\n");
+//	/**
+//	 * Get the result and remove the redundant edge and nodes
+//	 * 
+//	 * @param id
+//	 * @param maxLat
+//	 * @param maxLon
+//	 * @param minLat
+//	 * @param minLon
+//	 * @param dataPath
+//	 * @param exportPath
+//	 * @throws FileNotFoundException
+//	 * @throws UnsupportedEncodingException
+//	 * @throws IOException
+//	 */
+//	public void GetResult(String id, double minLon, double minLat,
+//			double maxLon, double maxLat, String dataPath, String exportPath)
+//			throws FileNotFoundException, UnsupportedEncodingException,
+//			IOException {
+//		this.outwriter = new OutputStreamWriter[exportType.values().length];
+//		exportPath += id + "/";
+//		File dir = new File(exportPath);
+//		dir.mkdir();
+//		// this.outwriter[exportType.node.ordinal()] =
+//		// new OutputStreamWriter(
+//		// new FileOutputStream(
+//		// exportPath + exportType.node.toString() + ".txt"), "UTF-8");
+//		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
+//				new FileOutputStream(exportPath + exportType.edge.toString()
+//						+ ".txt"), "UTF-8");
+//		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
+//				new FileOutputStream(exportPath
+//						+ exportType.unsortedNode.toString() + ".txt"), "UTF-8");
+//		// Set the area of interest in the MBR
+//		this.area = new MBR(new Point(minLon, minLat),
+//				new Point(maxLon, maxLat));
+//		// Get the set of Files that intersect with the area.
+//		List<Partition> files = ReadMaster(dataPath);
+//		// read eachfile and output the result.
+//		for (Partition f : files) {
+//			// Build the edge and the node from the file
+//			area.BuildNodeEdges(f.getPartition());
+//		}
+//		// Write the output in the file
+//		for (Point p : area.getNodes()) {
+//			outwriter[exportType.node.ordinal()].write(p.toString() + "\n");
+//
+//		}
+//		for (Edge e : area.getEdges()) {
+//			outwriter[exportType.edge.ordinal()].write(e.toString() + "\n");
+//		}
+//
+//		outwriter[exportType.edge.ordinal()].close();
+//		outwriter[exportType.node.ordinal()].close();
+//	}
 
-		}
-		for (Edge e : area.getEdges()) {
-			outwriter[exportType.edge.ordinal()].write(e.toString() + "\n");
-		}
-
-		outwriter[exportType.edge.ordinal()].close();
-		outwriter[exportType.node.ordinal()].close();
-	}
-
-	/**
-	 * This method output the result directly without check for redundant tuples
-	 * 
-	 * @param id
-	 * @param maxLat
-	 * @param maxLon
-	 * @param minLat
-	 * @param minLon
-	 * @param dataPath
-	 * @param exportPath
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 */
-	public void GetOutput(String id, String minLon, String minLat,
-			String maxLon, String maxLat, String dataPath, String exportPath)
-			throws FileNotFoundException, UnsupportedEncodingException,
-			IOException {
-		this.outwriter = new OutputStreamWriter[exportType.values().length];
-		exportPath += id + "/";
-		File dir = new File(exportPath);
-		dir.mkdir();
-		this.outwriter[exportType.node.ordinal()] = new OutputStreamWriter(
-				new FileOutputStream(exportPath + exportType.node.toString()
-						+ ".txt"), "UTF-8");
-		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
-				new FileOutputStream(exportPath + exportType.edge.toString()
-						+ ".txt"), "UTF-8");
-		// Set the area of interest in the MBR
-		this.area = new MBR(new Point(minLon, minLat),
-				new Point(maxLon, maxLat));
-		// Get the set of Files that intersect with the area.
-		logStart("start reading the master files");
-		List<Partition> files = ReadMaster(dataPath);
-		logEnd("end reading master file and selected (" + files.size() + ")");
-		// read eachfile and output the result.
-		logStart("start reading from selected files");
-		for (Partition f : files) {
-			System.out.println("Start Reading file "
-					+ f.getPartition().getName());
-			// Build the edge and the node from the file
-			area.BuildNodeEdges(f, outwriter[exportType.edge.ordinal()],
-					outwriter[exportType.node.ordinal()]);
-			System.out
-					.println("End reading file " + f.getPartition().getName());
-		}
-
-		// Write the output in the file because node need to be store in
-		// memory to remove duplicate.
-		// for (Point p : area.getNodes()) {
-		// outwriter[exportType.node.ordinal()].write(p.toString()+"\n");
-		//
-		// }
-		Iterator itr = area.getNodehased().iterator();
-		while (itr.hasNext()) {
-			Object element = itr.next();
-			outwriter[exportType.node.ordinal()].write(element.toString()
-					+ "\n");
-		}
-		logEnd("end reading files");
-		outwriter[exportType.edge.ordinal()].close();
-		outwriter[exportType.node.ordinal()].close();
-	}
+//	/**
+//	 * This method output the result directly without check for redundant tuples
+//	 * 
+//	 * @param id
+//	 * @param maxLat
+//	 * @param maxLon
+//	 * @param minLat
+//	 * @param minLon
+//	 * @param dataPath
+//	 * @param exportPath
+//	 * @throws FileNotFoundException
+//	 * @throws UnsupportedEncodingException
+//	 * @throws IOException
+//	 */
+//	public void GetOutput(String id, String minLon, String minLat,
+//			String maxLon, String maxLat, String dataPath, String exportPath)
+//			throws FileNotFoundException, UnsupportedEncodingException,
+//			IOException {
+//		this.outwriter = new OutputStreamWriter[exportType.values().length];
+//		exportPath += id + "/";
+//		File dir = new File(exportPath);
+//		dir.mkdir();
+//		this.outwriter[exportType.node.ordinal()] = new OutputStreamWriter(
+//				new FileOutputStream(exportPath + exportType.node.toString()
+//						+ ".txt"), "UTF-8");
+//		this.outwriter[exportType.edge.ordinal()] = new OutputStreamWriter(
+//				new FileOutputStream(exportPath + exportType.edge.toString()
+//						+ ".txt"), "UTF-8");
+//		// Set the area of interest in the MBR
+//		this.area = new MBR(new Point(minLon, minLat),
+//				new Point(maxLon, maxLat));
+//		// Get the set of Files that intersect with the area.
+//		logStart("start reading the master files");
+//		List<Partition> files = ReadMaster(dataPath);
+//		logEnd("end reading master file and selected (" + files.size() + ")");
+//		// read eachfile and output the result.
+//		logStart("start reading from selected files");
+//		for (Partition f : files) {
+//			System.out.println("Start Reading file "
+//					+ f.getPartition().getName());
+//			// Build the edge and the node from the file
+//			area.BuildNodeEdges(f, outwriter[exportType.edge.ordinal()],
+//					outwriter[exportType.node.ordinal()]);
+//			System.out
+//					.println("End reading file " + f.getPartition().getName());
+//		}
+//
+//		// Write the output in the file because node need to be store in
+//		// memory to remove duplicate.
+//		// for (Point p : area.getNodes()) {
+//		// outwriter[exportType.node.ordinal()].write(p.toString()+"\n");
+//		//
+//		// }
+//		Iterator itr = area.getNodehased().iterator();
+//		while (itr.hasNext()) {
+//			Object element = itr.next();
+//			outwriter[exportType.node.ordinal()].write(element.toString()
+//					+ "\n");
+//		}
+//		logEnd("end reading files");
+//		outwriter[exportType.edge.ordinal()].close();
+//		outwriter[exportType.node.ordinal()].close();
+//	}
 
 	public void GetSmartOutput(String id, String minLon, String minLat,
 			String maxLon, String maxLat, String dataPath, String exportPath,
@@ -206,12 +206,13 @@ public class Request {
 
 		
 
-		// Set the area of interest in the MBR
+		
+	
 		this.area = new MBR(new Point(minLon, minLat),
 				new Point(maxLon, maxLat));
 		// Get the set of Files that intersect with the area.
 		logStart("start reading the master files");
-		List<Partition> files = ReadMaster(dataPath);
+		List<Partition> files = ReadMaster(dataPath,type);
 		logEnd("end reading master file and selected (" + files.size() + ")");
 		// read eachfile and output the result.
 		logStart("start reading from selected files");
@@ -309,7 +310,7 @@ public class Request {
 	 * @param path
 	 * @return
 	 */
-	private List<Partition> ReadMaster(String path)
+	private List<Partition> ReadMaster(String path,dataType type)
 			throws FileNotFoundException, IOException {
 		File master;
 		List<Partition> result = new ArrayList<Partition>();
@@ -323,7 +324,7 @@ public class Request {
 			// between hadoop and this program
 			// #filenumber,minLat,minLon,maxLat,maxLon
 			if (temp.length == 8) {
-				Partition part = new Partition(line, path);
+				Partition part = new Partition(line, path,type);
 				if (area.Intersect(part.getArea().getMin(), part.getArea()
 						.getMax())) {
 					result.add(part);
