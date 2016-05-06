@@ -51,8 +51,11 @@ public class Main {
     public static String folderPath = "/export/scratch/louai/scratch1/TAREEG/";   
     									//"/export/scratch/louai/scratch1/workspace/dataset/osm/osmIndex/";
  
-    public static String exportPath = System.getProperty("user.dir") + "/userData/";
-    public static String emailPath = System.getProperty("user.dir") + "/email/";
+    public static String exportPath ="/export/scratch/louai/scratch1/TAREEG" + "/userData/";
+    public static String emailPath ="/export/scratch/louai/scratch1/TAREEG" + "/email/";
+    
+//    public static String exportPath = System.getProperty("user.dir") + "/userData/";
+//    public static String emailPath = System.getProperty("user.dir") + "/email/";
     public static String emailFlag;
 
     /**
@@ -63,7 +66,7 @@ public class Main {
     public static void main(String args[]) throws MessagingException {
         User user = new User();
         Request request = new Request();
-        args = new String[11]; // delete me after finish
+//        args = new String[11]; // delete me after finish louai updated
         if (args.length != 11) {
             System.out.println("Argument of this program ");
             System.out.println("<name>");
@@ -79,18 +82,19 @@ public class Main {
             System.out.println("[0|1] indicate send email or not");
         } else {
             try {
-                //21.541713013778292 40.57242393493422 21.396020222896393 40.40453910827428
-                args[0] = "RAMtest";
-                args[1] = "louai@cs.umn.edu";
-                args[2] = "lake_edges";
-                args[3] = "-93.53347778319626";
-                args[4] = "44.737954456869296"; 
-                args[5] = "-92.82760620116701"; 
-                args[6] = "45.189780096674646"; 
-                args[10] = "0";
-//                folderPath = args[7];
-//                exportPath = args[8];
-//                emailPath = args[9];
+           	
+              //21.541713013778292 40.57242393493422 21.396020222896393 40.40453910827428
+//                args[0] = "RAMtest";
+//                args[1] = "louai@cs.umn.edu";
+//                args[2] = "road_edges";
+//                args[3] = "-180";//"-93.53347778319626";
+//                args[4] = "-90";//"44.737954456869296"; 
+//                args[5] = "180";//"-92.82760620116701"; 
+//                args[6] = "90";//"45.189780096674646"; 
+//                args[10] = "0";
+                folderPath = args[7];
+                exportPath = args[8];
+                emailPath = args[9];
                 emailFlag = args[10];
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();

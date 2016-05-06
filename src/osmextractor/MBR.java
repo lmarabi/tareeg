@@ -343,7 +343,7 @@ public class MBR {
 										+ endNode.getY() + " ");
 								kmlwriter
 										.write("</coordinates>\n    </LineString>\n   </Placemark>");
-								resultWriter.write(tuple + "\n");
+//								resultWriter.write(tuple + "\n");
 
 							}
 						}
