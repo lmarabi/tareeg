@@ -21,11 +21,11 @@ import javax.mail.internet.MimeMessage;
 
 public class Emailer {
 
-    public static String HOST_NAME = "siwa-umh.cs.umn.edu";
+    public static String HOST_NAME = "ibn-battuta-umh.cs.umn.edu";
     private static final String SMTP_HOST_NAME = "smtp.gmail.com";
     private static final int SMTP_HOST_PORT = 465;
-    private static final String SMTP_AUTH_USER = "tareeg@gistic.org";//"openstreetmapextractor@gmail.com";
-    private static final String SMTP_AUTH_PWD = "louaitareeg";//"osmelouai";
+    private static final String SMTP_AUTH_USER = "tareeg.cs.umn@gmail.com";//"openstreetmapextractor@gmail.com";
+    private static final String SMTP_AUTH_PWD = "tareeg.louai";//"osmelouai";
     private static Main.dataType datatype;
 
     public static String downloadData(User userRquest) {
@@ -102,14 +102,14 @@ public class Emailer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+        System.out.println("reading file - louai");
         File nodeFile = new File(Main.exportPath + userRequest.getId() + "/node.txt");
         File edgeFile = new File(Main.exportPath + userRequest.getId() + "/edge.txt");
-        File kmlFile = new File(Main.exportPath + userRequest.getId() + "/result.kml");
-        File shpFile = new File(Main.exportPath + userRequest.getId() + "/shapefile.shp");
-        File shxFile = new File(Main.exportPath + userRequest.getId() + "/shapefile.shx");
-        File dbfFile = new File(Main.exportPath + userRequest.getId() + "/shapefile.dbf");
-        File prjFile = new File(Main.exportPath + userRequest.getId() + "/shapefile.prj");
+        File kmlFile = new File(Main.exportPath + userRequest.getId() + "/kml.KML");
+        File shpFile = new File(Main.exportPath + userRequest.getId() + "/output.shp");
+        File shxFile = new File(Main.exportPath + userRequest.getId() + "/output.shx");
+        File dbfFile = new File(Main.exportPath + userRequest.getId() + "/output.dbf");
+        File prjFile = new File(Main.exportPath + userRequest.getId() + "/output.prj");
         // Zip files into one zip file
         FileOutputStream fos = new FileOutputStream(Main.exportPath + userRequest.getId() + "/Data.zip");
         ZipOutputStream zos = new ZipOutputStream(fos);
@@ -122,6 +122,8 @@ public class Emailer {
                     break;
             }
         }
+        System.out.println("add zip file - louai");
+
         addToZipFile(nodeFile, zos);
         addToZipFile(edgeFile, zos);
         addToZipFile(kmlFile, zos);
@@ -192,9 +194,9 @@ public class Emailer {
                     + ".\n\n You can also visualize the extracted data at the Visualize option on our website \n"
                     + "http://tareeg.org \n"
                     + "Please be adviced, the visualization maybe very slow or fail, when the data file is large\r\n\n"
-                    + "If you have any comments, please  email us at tareeg@gistic.org.\r\n\r\n"
+                    + "If you have any comments, please  email us at tareeg.cs.umn@gmail.com.\r\n\r\n"
                     + "Thanks for using tareeg: mapreduce web-based spatial extractor ,\r\n"
-                    + "KACST GIS Innovation Center.";
+                    + "KACST GIS Innovation Center - Louai Alarabi";
 
 
         } else {
@@ -206,9 +208,9 @@ public class Emailer {
                     + "is failed. \n"
                     + "Most likely, "
                     + "the exported data is not supported yet.\n"
-                    + "If you still get problems , please contact tareeg@gistic.org.\n"
+                    + "If you still get problems , please contact tareeg.cs.umn@gmail.com\n"
                      + "Thanks for using tareeg: mapreduce web-based spatial extractor ,\r\n"
-                    + "KACST GIS Innovation Center";
+                    + "KACST GIS Innovation Center- Louai Alarabi";
         }
 
         message.setContent(content, "text/plain");
@@ -221,7 +223,7 @@ public class Emailer {
         }
 
         InternetAddress[] mntgAddress = new InternetAddress[1];
-        mntgAddress[0] = new InternetAddress("tareeg@gistic.org", "TAREEG"); //here we set our email alias and the desired display name
+        mntgAddress[0] = new InternetAddress("tareeg.cs.umn@gmail.com", "TAREEG"); //here we set our email alias and the desired display name
         InternetAddress customer_email = new InternetAddress(userRequest.getEmail());//customer email
 
         message.addRecipient(Message.RecipientType.TO, customer_email);
@@ -289,7 +291,7 @@ public class Emailer {
             e.printStackTrace();
         }
 
-        InternetAddress notifyAddress = new InternetAddress("tareeg@gistic.org", "TAREEG Admin"); //here we set our email alias and the desired display name
+        InternetAddress notifyAddress = new InternetAddress("tareeg.cs.umn@gmail.com", "TAREEG Admin"); //here we set our email alias and the desired display name
         // sendEmail(mntgAddress[0], notifyAddress,
         //      "Minnesota Traffic Generator has been used today and the results for request #" + trafficRequest.getRequestId() + " has been submitted to the user on " + trafficRequest.getEmail() + ".", trafficRequest.getEmail());
         //InternetAddress notifyAddress2 = new InternetAddress("amr@cs.umn.edu", "Amr Magdy"); //here we set our email alias and the desired display name

@@ -244,7 +244,20 @@ public class Main {
                 + exportPath + id + "/kml.KML "
                 + exportPath + id + "/";
         System.out.println(commandLine);
-        Process process = Runtime.getRuntime().exec(commandLine);
+//        Process process = Runtime.getRuntime().exec(commandLine);
+
+try {
+	            Process p = Runtime.getRuntime().exec(commandLine);
+		                BufferedReader in = new BufferedReader(
+						                                new InputStreamReader(p.getInputStream()));
+				            String line = null;
+					                while ((line = in.readLine()) != null) {
+								                System.out.println(line);
+										            }
+							        } catch (IOException e) {
+									            e.printStackTrace();
+										            }
+
         request.logEnd("End generating shape file");
     }
     
