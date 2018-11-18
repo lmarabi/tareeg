@@ -24,8 +24,8 @@ public class Emailer {
     public static String HOST_NAME = "ibn-battuta-umh.cs.umn.edu";
     private static final String SMTP_HOST_NAME = "smtp.gmail.com";
     private static final int SMTP_HOST_PORT = 465;
-    private static final String SMTP_AUTH_USER = "tareeg.cs.umn@gmail.com";//"openstreetmapextractor@gmail.com";
-    private static final String SMTP_AUTH_PWD = "tareeg.louai";//"osmelouai";
+    private static final String SMTP_AUTH_USER = "@gmail.com";//"openstreetmapextractor@gmail.com";
+    private static final String SMTP_AUTH_PWD = "";//"osmelouai";
     private static Main.dataType datatype;
 
     public static String downloadData(User userRquest) {
